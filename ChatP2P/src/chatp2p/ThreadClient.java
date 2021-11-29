@@ -5,16 +5,12 @@
  */
 package chatp2p;
 
-import java.awt.Component;
 import java.io.IOException;
-import java.lang.System.Logger;
-import java.lang.System.Logger.Level;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -37,8 +33,6 @@ public class ThreadClient extends Thread {
             java.util.logging.Logger.getLogger(ThreadClient.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
     }
-
-    public ThreadClient() {}
 
     public void InviaPacchetto(String riga) throws UnknownHostException {
         buffer = riga.getBytes();

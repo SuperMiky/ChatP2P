@@ -14,12 +14,16 @@ import java.util.List;
  */
 public class DatiCondivisi {
 
-    Grafica g = new Grafica();
-    private List<String> DaInviare = new ArrayList<>(); //il client prende da qui i pacchetti da inviare
-    private List<String> DaElaborare = new ArrayList<>(); //il server mette qui i pacchetti ricevuti da elaborare
-    private boolean connesso = false; //per vedere se c'è già un peer connesso
+    private List<String> DaInviare; //il client prende da qui i pacchetti da inviare
+    private List<String> DaElaborare; //il server mette qui i pacchetti ricevuti da elaborare
+    private boolean connesso; //per vedere se c'è già un peer connesso
 
-    public DatiCondivisi() {}
+    public DatiCondivisi()
+    {
+        DaInviare = new ArrayList<>();
+        DaElaborare = new ArrayList<>();
+        connesso = false;
+    }
     
     public List<String> getDaElaborare() {
         return DaElaborare;

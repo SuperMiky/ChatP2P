@@ -23,11 +23,10 @@ public class Grafica extends javax.swing.JFrame {
      * Creates new form Grafica
      */
     public Grafica() {
-        
         initComponents();
         setResizable(false); //non permetto di modificare le dimensioni della finestra
     }
-
+    static DatiCondivisi dati = new DatiCondivisi();
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -143,7 +142,6 @@ public class Grafica extends javax.swing.JFrame {
  
     private void BtnConnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnConnActionPerformed
 
-        DatiCondivisi dati = new DatiCondivisi();
         if(TxtNomeMitt.getText().equals("")) //se non ha inserito il suo nome
             JOptionPane.showMessageDialog(null, "Devi prima inserire il tuo nome", "Errore", 0); //pop-up
         else{
@@ -152,11 +150,8 @@ public class Grafica extends javax.swing.JFrame {
     }//GEN-LAST:event_BtnConnActionPerformed
 
     //metodo per accettare o rifiutare la connessione
-    public void MessConnessione(DatiCondivisi d,String nomeMitt) throws UnknownHostException
+    public void MessConnessione(String nomeMitt)
     {
-        String risp  = "";
-        ThreadClient c = new ThreadClient();
-        
         int risposta = JOptionPane.showConfirmDialog(null, "Accettare connessione da " + nomeMitt + "?", "Richiesta connessione", JOptionPane.YES_NO_OPTION );
         if (risposta == JOptionPane.YES_OPTION) {
             TxtNomeDest.setText(nomeMitt); //!!! non lo inserisce
@@ -166,12 +161,12 @@ public class Grafica extends javax.swing.JFrame {
                 nomeUtente = JOptionPane.showInputDialog("inserisci il tuo nome");
             }
             TxtNomeMitt.setText(nomeUtente); //!!! non lo inserisce
-            d.setConnesso(true); //connesso
-            d.setInvia("y;" + nomeUtente);
+            dati.setConnesso(true); //status:connesso
+            dati.AddDaInviare("y;" + nomeUtente); //aggiungo il pacchetto da inviare
         }
         else {
-            d.setConnesso(false); //non connesso
-            d.setInvia("n");
+            dati.setConnesso(false); //non connesso
+            dati.AddDaInviare("n");
         }
     }
     
@@ -234,7 +229,8 @@ public class Grafica extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Grafica().setVisible(true);
-                DatiCondivisi dati = new DatiCondivisi();
+                
+                //ThreadClient
                 ThreadClient client;
                 try {
                     client = new ThreadClient(dati);
@@ -243,16 +239,20 @@ public class Grafica extends javax.swing.JFrame {
                     Logger.getLogger(Grafica.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 
+                
+                //ThreadServer
                 ThreadServer server;
                 try {
                     server = new ThreadServer(dati);
                     server.start();
                 } catch (SocketException ex) {
                     Logger.getLogger(Grafica.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (UnknownHostException ex) {
-                    Logger.getLogger(Grafica.class.getName()).log(Level.SEVERE, null, ex);
-                }   
-            }
+                }
+                
+                //ThreadElabora
+                ThreadElabora elabora = new ThreadElabora(dati);
+                elabora.start();
+            } 
         });
     }
     

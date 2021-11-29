@@ -18,14 +18,14 @@ import java.util.logging.Level;
  * @author Miky
  */
 public class ThreadServer extends Thread {
-    private DatiCondivisi daticondivisi;
+    private DatiCondivisi dati;
     private DatagramSocket Server;
     private DatagramPacket packet;
     private byte[] Bytedata;
     private boolean stop;
 
-    public ThreadServer(DatiCondivisi dati) throws SocketException, UnknownHostException {
-        daticondivisi = dati;
+    public ThreadServer(DatiCondivisi dati) throws SocketException {
+        this.dati = dati;
         Server = new DatagramSocket(777);
         Bytedata = new byte[1024];
         packet = new DatagramPacket(Bytedata, Bytedata.length);
@@ -41,7 +41,7 @@ public class ThreadServer extends Thread {
                 Server.receive(packet);
                 byte[] dataReceived = packet.getData();
                 messaggioRicevuto = new String(dataReceived, 0, packet.getLength());
-                daticondivisi.AddDaElaborare(messaggioRicevuto); //passo il pacchetto da elaborare
+                dati.AddDaElaborare(messaggioRicevuto); //passo il pacchetto da elaborare
             }catch (IOException ex) {
                 java.util.logging.Logger.getLogger(ThreadServer.class.getName()).log(Level.SEVERE, null, ex);
             }  
