@@ -41,7 +41,7 @@ public class ThreadServer extends Thread {
                 Server.receive(packet);
                 byte[] dataReceived = packet.getData();
                 messaggioRicevuto = new String(dataReceived, 0, packet.getLength());
-                daticondivisi.setRicevi(messaggioRicevuto); 
+                daticondivisi.AddDaElaborare(messaggioRicevuto); //passo il pacchetto da elaborare
             }catch (IOException ex) {
                 java.util.logging.Logger.getLogger(ThreadServer.class.getName()).log(Level.SEVERE, null, ex);
             }  

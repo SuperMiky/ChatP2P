@@ -10,5 +10,12 @@ package chatp2p;
  * @author Miky
  */
 public class ThreadElabora {
+
+    public ThreadElabora() {}
     
+    public void run()
+    {
+        
+    }
+   
 }
