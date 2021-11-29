@@ -6,88 +6,45 @@
 package chatp2p;
 
 import java.io.IOException;
+import java.lang.System.Logger;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
-import java.util.Scanner;
+import java.net.UnknownHostException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author Miky
  */
 public class ThreadServer extends Thread {
-
+    private DatiCondivisi daticondivisi;
     private DatagramSocket Server;
     private DatagramPacket packet;
     private byte[] Bytedata;
     private boolean stop;
-    
-    Scanner myObj;
 
-    public ThreadServer() throws SocketException {
-        Server = new DatagramSocket(666);
+    public ThreadServer(DatiCondivisi dati) throws SocketException, UnknownHostException {
+        daticondivisi = dati;
+        Server = new DatagramSocket(777);
         Bytedata = new byte[1024];
         packet = new DatagramPacket(Bytedata, Bytedata.length);
         stop = false;
-        
-        myObj = new Scanner(System.in);
     }
-
+    
+    @Override
     public void run() {
-        while (stop == false) {
-            String[] campi = RiceviPacchetto().split(";");
-            switch (campi[0]) {
-                case "c": {
-                    System.out.println("Accettare la connessione da: " + campi[1] + "?");
-                    String risposta = myObj.nextLine();
-                    if (risposta.equals("si")) {
-                        InviaPacchetto("y;pluto");
-                    } else {
-                        InviaPacchetto("n");
-                    }
-                }
-                case "m": {
-                    System.out.println("Inserisci messaggio");
-                    String messaggio = myObj.nextLine();
-                    InviaPacchetto(messaggio);
-                }
-                case "d": {
-                    setStop(true);
-                }
-            }
+        while(true)
+        {
+           String messaggioRicevuto = "";
+            try {
+                Server.receive(packet);
+                byte[] dataReceived = packet.getData();
+                messaggioRicevuto = new String(dataReceived, 0, packet.getLength());
+                daticondivisi.setRicevi(messaggioRicevuto); 
+            }catch (IOException ex) {
+                java.util.logging.Logger.getLogger(ThreadServer.class.getName()).log(Level.SEVERE, null, ex);
+            }  
         }
-    }
-
-    public String RiceviPacchetto() {
-        String messaggioRicevuto = "";
-        try {
-            Server.receive(packet);
-            byte[] dataReceived = packet.getData();
-            messaggioRicevuto = new String(dataReceived, 0, packet.getLength());
-
-        } catch (IOException ex) {
-            Logger.getLogger(ThreadServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return messaggioRicevuto;
-
-    }
-
-    public void InviaPacchetto(String riga) {
-        try {
-            byte[] responseBuffer = riga.getBytes();
-            DatagramPacket responsePacket = new DatagramPacket(responseBuffer, responseBuffer.length);
-            responsePacket.setAddress(packet.getAddress());
-            responsePacket.setPort(packet.getPort());
-            Server.send(responsePacket);
-
-        } catch (IOException ex) {
-            Logger.getLogger(ThreadServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public void setStop(boolean stop) {
-        this.stop = stop;
     }
 }

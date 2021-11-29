@@ -11,22 +11,23 @@ package chatp2p;
  */
 public class CSV {
 
-    public CSV() {}
-    
-    static String[] fromCsv(String dati)
-    {
-        String[] riga = dati.split(";");
-        return riga;
+    public CSV() {
     }
     
-    static String toCSV(String[] campi)
+    static String Componi(String vett[])
     {
-        String riga = "";
-        for(int i = 0; i < campi.length - 1; i++)
+        String dati = "";
+        for(int i = 0; i < vett.length - 1; i++)
         {
-            riga += campi[i] + ";";
+            dati += vett[i] + ";";
         }
-        riga += campi[campi.length - 1];
-        return riga;
+        dati += vett[vett.length - 1]; //l'ultimo non deve avere la virgola      
+        return dati;
+    }
+    
+    static String[] Splitta(String dati)
+    {
+        String[] d = dati.split(";"); //splitto i dati
+        return d;
     }
 }
