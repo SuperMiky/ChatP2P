@@ -239,7 +239,6 @@ public class Grafica extends javax.swing.JFrame {
                     Logger.getLogger(Grafica.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 
-                
                 //ThreadServer
                 ThreadServer server;
                 try {

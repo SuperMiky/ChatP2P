@@ -20,6 +20,7 @@ public class ThreadElabora extends Thread {
         g = new Grafica();
     }
     
+    @Override
     public void run()
     {
         while(true)

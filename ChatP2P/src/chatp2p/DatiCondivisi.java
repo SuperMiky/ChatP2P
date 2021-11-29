@@ -40,7 +40,7 @@ public class DatiCondivisi {
     
     public void AddDaElaborare(String pacchetto)
     {
-        DaInviare.add(pacchetto);
+        DaElaborare.add(pacchetto);
     }
     
     public boolean isConnesso() {

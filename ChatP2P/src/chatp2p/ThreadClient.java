@@ -28,7 +28,7 @@ public class ThreadClient extends Thread {
         this.dati = dati;
         try {
             socket = new DatagramSocket();
-            address = InetAddress.getByName("192.168.1.10");
+            address = InetAddress.getByName("localhost");
         } catch (SocketException ex) {
             java.util.logging.Logger.getLogger(ThreadClient.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
@@ -36,7 +36,7 @@ public class ThreadClient extends Thread {
 
     public void InviaPacchetto(String riga) throws UnknownHostException {
         buffer = riga.getBytes();
-        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, address, 666);
+        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, address, 4321);
         try {
             socket.send(packet);
         } catch (IOException ex) {
@@ -48,17 +48,14 @@ public class ThreadClient extends Thread {
     public void run() {
         while (true) 
         {
-            while(true)
+            if(dati.getDaInviare().size() > 0) //se nella lista c'è qualcosa
             {
-                if(dati.getDaInviare().size() > 0) //se nella lista c'è qualcosa
-                {
-                    String pacchetto = dati.getDaInviare().get(0); //mi salvo il pacchetto
-                    dati.getDaInviare().remove(0); //rimuovo dalla lista il pacchetto
-                    try {
-                        InviaPacchetto(pacchetto); //invio il pacchetto
-                    } catch (UnknownHostException ex) {
-                        java.util.logging.Logger.getLogger(ThreadClient.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-                    }
+                String pacchetto = dati.getDaInviare().get(0); //mi salvo il pacchetto
+                dati.getDaInviare().remove(0); //rimuovo dalla lista il pacchetto
+                try {
+                    InviaPacchetto(pacchetto); //invio il pacchetto
+                } catch (UnknownHostException ex) {
+                    java.util.logging.Logger.getLogger(ThreadClient.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
                 }
             }
         }

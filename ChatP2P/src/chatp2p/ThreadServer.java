@@ -26,8 +26,8 @@ public class ThreadServer extends Thread {
 
     public ThreadServer(DatiCondivisi dati) throws SocketException {
         this.dati = dati;
-        Server = new DatagramSocket(777);
-        Bytedata = new byte[1024];
+        Server = new DatagramSocket(666);
+        Bytedata = new byte[1500];
         packet = new DatagramPacket(Bytedata, Bytedata.length);
         stop = false;
     }
