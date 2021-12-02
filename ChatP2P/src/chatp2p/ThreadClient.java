@@ -28,7 +28,7 @@ public class ThreadClient extends Thread {
         this.dati = dati;
         try {
             socket = new DatagramSocket();
-            address = InetAddress.getByName("localhost");
+            address = InetAddress.getByName("192.168.1.11");
         } catch (SocketException ex) {
             java.util.logging.Logger.getLogger(ThreadClient.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
@@ -36,7 +36,7 @@ public class ThreadClient extends Thread {
 
     public void InviaPacchetto(String riga) throws UnknownHostException {
         buffer = riga.getBytes();
-        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, address, 4321);
+        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, address, 12345);
         try {
             socket.send(packet);
         } catch (IOException ex) {
