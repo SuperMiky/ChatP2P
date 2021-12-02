@@ -22,14 +22,12 @@ public class ThreadServer extends Thread {
     private DatagramSocket Server;
     private DatagramPacket packet;
     private byte[] Bytedata;
-    private boolean stop;
 
     public ThreadServer(DatiCondivisi dati) throws SocketException {
         this.dati = dati;
         Server = new DatagramSocket(12345);
         Bytedata = new byte[1500];
         packet = new DatagramPacket(Bytedata, Bytedata.length);
-        stop = false;
     }
     
     @Override
@@ -41,6 +39,7 @@ public class ThreadServer extends Thread {
                 Server.receive(packet);
                 byte[] dataReceived = packet.getData();
                 messaggioRicevuto = new String(dataReceived, 0, packet.getLength());
+                System.out.println("server "+messaggioRicevuto);
                 dati.AddDaElaborare(messaggioRicevuto); //passo il pacchetto da elaborare
             }catch (IOException ex) {
                 java.util.logging.Logger.getLogger(ThreadServer.class.getName()).log(Level.SEVERE, null, ex);

@@ -5,6 +5,7 @@
  */
 package chatp2p;
 
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,30 +18,47 @@ public class DatiCondivisi {
     private List<String> DaInviare; //il client prende da qui i pacchetti da inviare
     private List<String> DaElaborare; //il server mette qui i pacchetti ricevuti da elaborare
     private boolean connesso; //per vedere se c'è già un peer connesso
-
+    private Object sInvia,sElabora;
+    Grafica g;
     public DatiCondivisi()
     {
+        sElabora=new Object();
+        sInvia=new Object();
         DaInviare = new ArrayList<>();
         DaElaborare = new ArrayList<>();
         connesso = false;
     }
     
-    public List<String> getDaElaborare() {
-        return DaElaborare;
+    public void AddDaElaborare(String messaggio) {
+        synchronized(sElabora)
+        {DaElaborare.add(messaggio);}
     }
 
-    public List<String> getDaInviare() {
-        return DaInviare;
+    public void AddDaInviare(String messaggio) {
+        synchronized(sInvia)
+        {DaInviare.add(messaggio);}
+    }
+    public String GetDaElaborare() {
+        synchronized(sElabora)
+        {String ris=DaElaborare.get(DaElaborare.size()-1);
+        DaElaborare.remove(DaElaborare.size()-1);
+        return ris;}
     }
 
-    public void AddDaInviare(String pacchetto)
-    {
-        DaInviare.add(pacchetto);
+    public String GetDaInviare() {
+        synchronized(sInvia)
+        {String ris=DaInviare.get(DaInviare.size()-1);
+        DaInviare.remove(DaInviare.size()-1);
+        return ris;}
     }
     
-    public void AddDaElaborare(String pacchetto)
-    {
-        DaElaborare.add(pacchetto);
+    public int GetSizeDaInviare() {
+        synchronized(sInvia)
+        {return DaInviare.size();}
+    }
+    public int GetSizeDaElaborare() {
+        synchronized(sElabora)
+        {return DaElaborare.size();}
     }
     
     public boolean isConnesso() {

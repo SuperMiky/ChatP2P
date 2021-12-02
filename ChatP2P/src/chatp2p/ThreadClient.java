@@ -18,24 +18,21 @@ import java.net.UnknownHostException;
  */
 public class ThreadClient extends Thread {
 
-    Grafica g = new Grafica();
     private DatiCondivisi dati;
     private DatagramSocket socket;
     private InetAddress address;
-    private byte[] buffer;
-
     public ThreadClient(DatiCondivisi dati) throws UnknownHostException {
         this.dati = dati;
+        address=InetAddress.getByName("192.168.1.2");
         try {
             socket = new DatagramSocket();
-            address = InetAddress.getByName("192.168.1.11");
         } catch (SocketException ex) {
             java.util.logging.Logger.getLogger(ThreadClient.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
     }
 
     public void InviaPacchetto(String riga) throws UnknownHostException {
-        buffer = riga.getBytes();
+        byte[] buffer = riga.getBytes();
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length, address, 12345);
         try {
             socket.send(packet);
@@ -48,10 +45,10 @@ public class ThreadClient extends Thread {
     public void run() {
         while (true) 
         {
-            if(dati.getDaInviare().size() > 0) //se nella lista c'è qualcosa
+            if(dati.GetSizeDaInviare() > 0) //se nella lista c'è qualcosa
             {
-                String pacchetto = dati.getDaInviare().get(0); //mi salvo il pacchetto
-                dati.getDaInviare().remove(0); //rimuovo dalla lista il pacchetto
+                String pacchetto = dati.GetDaInviare(); //mi salvo il pacchetto
+                System.out.println("client "+pacchetto);
                 try {
                     InviaPacchetto(pacchetto); //invio il pacchetto
                 } catch (UnknownHostException ex) {

@@ -5,6 +5,8 @@
  */
 package chatp2p;
 
+import static java.lang.Thread.sleep;
+import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.logging.Level;
@@ -22,11 +24,13 @@ public class Grafica extends javax.swing.JFrame {
     /**
      * Creates new form Grafica
      */
-    public Grafica() {
+    DatiCondivisi dati;
+    public Grafica(DatiCondivisi dati) {
         initComponents();
         setResizable(false); //non permetto di modificare le dimensioni della finestra
+        this.dati=dati;
+        this.dati.g=this;
     }
-    static DatiCondivisi dati = new DatiCondivisi();
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -155,6 +159,7 @@ public class Grafica extends javax.swing.JFrame {
         int risposta = JOptionPane.showConfirmDialog(null, "Accettare connessione da " + nomeMitt + "?", "Richiesta connessione", JOptionPane.YES_NO_OPTION );
         if (risposta == JOptionPane.YES_OPTION) {
             TxtNomeDest.setText(nomeMitt); //!!! non lo inserisce
+            
             String nomeUtente = "";
             while(nomeUtente.equals(""))
             {
@@ -169,7 +174,10 @@ public class Grafica extends javax.swing.JFrame {
             dati.AddDaInviare("n");
         }
     }
-    
+    public void AddMessaggio(String messaggio)
+    {
+        TxtDest.setText(TxtDest.getText()+"\r\n"+messaggio);
+    }
     public void OkConn(String NomeDest) //metodo connessione accettata
     {
         JOptionPane.showMessageDialog(null, "richiesta di connessione accettata da " + NomeDest, "Ok Connessione", 1); //pop-up
@@ -181,23 +189,14 @@ public class Grafica extends javax.swing.JFrame {
     }
 
     private void BtnMessActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnMessActionPerformed
-        /*if(DatiCondivisi.isConnesso() == true)
+        if(dati.isConnesso() == true)
         {
-            ThreadClient c = new ThreadClient();
-            try {
-                c.InviaPacchetto("m;" + TxtMittente.getText()); //invio il pacchetto con il mio nome
-            } catch (UnknownHostException ex) {
-                Logger.getLogger(Grafica.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            dati.AddDaInviare("m;" + TxtMittente.getText()); //invio il pacchetto con il mio nome
         }
         else
             JOptionPane.showMessageDialog(null, "Effettuare la connessione prima di inviare un messaggio");
     }//GEN-LAST:event_BtnMessActionPerformed
 
-    public void VisMess(String mes) { //visualizza il messaggio ricevuto
-        System.out.println(mes);*/
-    }
-    
     /**
      * @param args the command line arguments
      */
@@ -226,33 +225,40 @@ public class Grafica extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
+        DatiCondivisi d=new DatiCondivisi();
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Grafica().setVisible(true);
-                
-                //ThreadClient
-                ThreadClient client;
-                try {
-                    client = new ThreadClient(dati);
-                    client.start();
-                } catch (UnknownHostException ex) {
-                    Logger.getLogger(Grafica.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                
-                //ThreadServer
-                ThreadServer server;
-                try {
-                    server = new ThreadServer(dati);
-                    server.start();
-                } catch (SocketException ex) {
-                    Logger.getLogger(Grafica.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                
-                //ThreadElabora
-                ThreadElabora elabora = new ThreadElabora(dati);
-                elabora.start();
+                new Grafica(d).setVisible(true);
             } 
         });
+        while(d.g==null){try {
+            sleep(1);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Grafica.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+            
+        //ThreadClient
+        ThreadClient client;
+        try {
+            client = new ThreadClient(d);
+            client.start();
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(Grafica.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        //ThreadServer
+        ThreadServer server;
+        try {
+            server = new ThreadServer(d);
+            server.start();
+        } catch (SocketException ex) {
+            Logger.getLogger(Grafica.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        //ThreadElabora
+        ThreadElabora elabora = new ThreadElabora(d);
+        elabora.start();
     }
     
     
